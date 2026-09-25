@@ -1,0 +1,25 @@
+---
+name: node
+
+on:
+  workflow_call:
+    inputs:
+      dry-run:
+        description: Build without deploying, defaults to true everywhere except main
+        type: boolean
+        default: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  node:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions/setup-node@v7
+      with: { node-version-file: package.json }
+    - uses: pnpm/action-setup@v6
+      with: { package_json_file: package.json }
+    - run: pnpm install --frozen-lockfile
+    - run: pnpm run lint
+    - run: pnpm run build
+    - run: pnpm run deploy
+      if: ${{ !inputs.dry-run }}

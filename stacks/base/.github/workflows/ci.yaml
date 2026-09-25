@@ -1,0 +1,12 @@
+---
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  pre-commit:
+    uses: beehivejava/templates/.github/workflows/pre-commit.yaml@main

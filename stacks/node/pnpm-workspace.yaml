@@ -1,0 +1,8 @@
+---
+packages:
+- apps/*
+- packages/*
+
+catalog:
+  turbo: 2.11.4
+  typescript: 7.0.2
