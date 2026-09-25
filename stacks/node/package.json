@@ -14,6 +14,7 @@
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
+    "@biomejs/biome": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:"
   }
