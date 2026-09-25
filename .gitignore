@@ -1,0 +1,6 @@
+# General
+**/*.env.keys
+
+# IDE
+**/.idea/
+**/.vscode/

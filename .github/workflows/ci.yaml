@@ -1,0 +1,22 @@
+---
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  pre-commit:
+    uses: ./.github/workflows/pre-commit.yaml
+
+  render:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        stacks: ["-y", "node"]
+    steps:
+    - uses: actions/checkout@v7
+    - run: mkdir "$RUNNER_TEMP/out" && cd "$RUNNER_TEMP/out" && TEMPLATE="$GITHUB_WORKSPACE" bash "$GITHUB_WORKSPACE/init.sh" ${{ matrix.stacks }}
+    - run: npx --yes @biomejs/biome check "$RUNNER_TEMP/out"

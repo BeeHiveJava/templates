@@ -1,0 +1,22 @@
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.base.schema.json",
+  "name": "templates",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:26",
+  "features": {
+    "ghcr.io/devcontainer-community/devcontainer-features/biomejs.dev:1": {},
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "moby": false
+    },
+    "ghcr.io/devcontainers-extra/features/pre-commit:2": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "biomejs.biome",
+        "EditorConfig.EditorConfig",
+        "redhat.vscode-yaml"
+      ]
+    }
+  },
+  "postCreateCommand": "pre-commit install"
+}
