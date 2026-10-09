@@ -1,9 +1,8 @@
----
 packages:
 - apps/*
 - packages/*
 
 catalog:
-  '@biomejs/biome': 2.5.14
-  turbo: 2.11.4
+  '@biomejs/biome': 2.5.15
+  turbo: 2.11.7
   typescript: 7.0.2
