@@ -19,4 +19,5 @@ jobs:
     steps:
     - uses: actions/checkout@v7
     - run: mkdir "$RUNNER_TEMP/out" && cd "$RUNNER_TEMP/out" && TEMPLATE="$GITHUB_WORKSPACE" bash "$GITHUB_WORKSPACE/init.sh" ${{ matrix.stacks }}
-    - run: npx --yes @biomejs/biome check "$RUNNER_TEMP/out"
+    - run: npx --yes @biomejs/biome check .
+      working-directory: ${{ runner.temp }}/out
