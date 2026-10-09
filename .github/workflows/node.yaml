@@ -20,6 +20,7 @@ jobs:
       with: { package_json_file: package.json }
     - run: pnpm install --frozen-lockfile
     - run: pnpm run lint
+    - run: pnpm run test
     - run: pnpm run build
     - run: pnpm run deploy
       if: ${{ !inputs.dry-run }}

@@ -9,6 +9,7 @@
     "lint": "biome check .",
     "dev": "turbo dev",
     "build": "turbo build",
+    "test": "turbo test",
     "deploy": "turbo deploy",
     "preview": "turbo preview",
     "typecheck": "turbo typecheck"
