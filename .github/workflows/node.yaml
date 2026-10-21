@@ -20,7 +20,9 @@ jobs:
       with: { node-version-file: package.json, cache: pnpm }
     - uses: actions/cache@v6
       with:
-        path: .turbo/cache
+        path: |
+          .turbo/cache
+          node_modules/.vitest-cache
         key: turbo|${{ runner.os }}|${{ github.sha }}
         restore-keys: turbo|${{ runner.os }}|
     - run: pnpm install --frozen-lockfile --prefer-offline
