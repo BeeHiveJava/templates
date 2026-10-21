@@ -11,6 +11,11 @@
   "formatter": {
     "useEditorconfig": true
   },
+  "yaml": {
+    "formatter": {
+      "enabled": false
+    }
+  },
   "linter": {
     "rules": {
       "style": {
