@@ -4,5 +4,5 @@ packages:
 
 catalog:
   '@biomejs/biome': 2.6.2
-  turbo: 2.11.9
+  turbo: 2.11.10
   typescript: 7.0.2
