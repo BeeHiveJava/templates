@@ -10,6 +10,15 @@ jobs:
     steps:
     - uses: actions/checkout@v7
     - uses: astral-sh/setup-uv@v10.3.2
+    - uses: voidzero-dev/setup-vp@v1.22.0
+      if: ${{ hashFiles('pnpm-workspace.yaml') != '' }}
+      with: { cache: true }
+    - uses: actions/cache@v6
+      if: ${{ hashFiles('pnpm-workspace.yaml') != '' }}
+      with:
+        path: node_modules/.vite/task-cache
+        key: vite-task|pre-commit|${{ runner.os }}|${{ github.sha }}
+        restore-keys: vite-task|pre-commit|${{ runner.os }}|
     - uses: actions/cache@v6
       with:
         path: ~/.cache/pre-commit

@@ -1,0 +1,15 @@
+{
+  "name": "@beehivejava/config",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    "./tsconfig/*": "./tsconfig/*",
+    "./vite": {
+      "types": "./vite.d.ts",
+      "default": "./vite.js"
+    }
+  },
+  "peerDependencies": {
+    "vite-plus": ">=1.4.0"
+  }
+}

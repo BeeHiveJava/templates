@@ -1,0 +1,5 @@
+{
+  "files": {
+    "includes": ["**", "!**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,vue}"]
+  }
+}

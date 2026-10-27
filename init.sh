@@ -18,7 +18,7 @@ fi
 set -o errtrace         # Ensure the error trap handler is inherited
 
 # Repository root paths that belong to this repository only
-readonly ROOT_EXCLUDES=(.git .github .devcontainer/devcontainer-lock.json stacks init.sh README.md)
+readonly ROOT_EXCLUDES=(.git .github packages .devcontainer/devcontainer-lock.json stacks init.sh README.md)
 
 # DESC: Exit script with the given message
 # ARGS: $1 (required): Message to print on exit
@@ -140,6 +140,19 @@ function yq_init() {
     PATH="$work/bin:$PATH"
 }
 
+# DESC: Locate biome, preferring a global install over the version pinned for pre-commit
+# ARGS: None
+# OUTS: $biome: Command to run biome, empty if unavailable
+# RETS: None
+function biome_init() {
+    biome=()
+    if command -v biome > /dev/null 2>&1; then
+        biome=(biome)
+    elif command -v npx > /dev/null 2>&1; then
+        biome=(npx --yes "$(grep -o '@biomejs/biome@[^"]*' "$template/.pre-commit-config.yaml")")
+    fi
+}
+
 # DESC: Prompt for stacks via the terminal, as stdin is this script when piped
 # ARGS: None
 # OUTS: $stacks: Chosen stacks
@@ -193,8 +206,8 @@ function apply_layer() {
             printf '%s\n' "$merged" > "$target"
             # yq's JSON layout differs from biome's; otherwise pre-commit fixes it on first commit
             # (best effort: a global biome older than biome.json rejects its config)
-            if [[ $format == json ]] && command -v biome > /dev/null 2>&1; then
-                biome format --write "$target" > /dev/null 2>&1 || true
+            if [[ $format == json && ${#biome[@]} -gt 0 ]]; then
+                "${biome[@]}" format --write "$target" > /dev/null 2>&1 || true
             fi
         fi
         written+=("$target")
@@ -226,6 +239,7 @@ function main() {
     work_init
     template_init
     yq_init
+    biome_init
     if [[ $interactive == true ]]; then
         pick_stacks
     fi

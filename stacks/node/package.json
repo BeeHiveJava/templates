@@ -5,16 +5,8 @@
   "engines": {
     "node": ">=24"
   },
-  "scripts": {
-    "lint": "biome check .",
-    "test": "vp run typecheck && vp run -F '!.' --cache test",
-    "dev": "vp run -F '!.' --parallel dev",
-    "build": "vp run typecheck && vp run -F '!.' --cache build",
-    "deploy": "vp run build && vp run -F '!.' deploy",
-    "preview": "vp run build && vp run -F '!.' preview",
-    "typecheck": "vp run -F '!.' --cache typecheck"
-  },
   "devDependencies": {
+    "@beehivejava/config": "catalog:",
     "@biomejs/biome": "catalog:",
     "typescript": "catalog:",
     "vite-plus": "catalog:"

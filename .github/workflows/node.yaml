@@ -23,7 +23,6 @@ jobs:
           node_modules/.vitest-cache
         key: vite-task|${{ runner.os }}|${{ github.sha }}
         restore-keys: vite-task|${{ runner.os }}|
-    - run: vp run lint
     - run: vp run test
     - run: vp run build
     - name: Run vp run deploy

@@ -1,0 +1,8 @@
+- repo: local
+  hooks:
+  - id: vp-lint
+    name: vp run lint
+    entry: pnpm exec vp run lint
+    language: system
+    pass_filenames: false
+    always_run: true
