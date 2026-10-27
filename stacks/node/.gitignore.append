@@ -11,6 +11,3 @@
 **/.output/
 **/.nuxt/
 **/nuxt/dist/
-
-# Turbo
-**/.turbo/

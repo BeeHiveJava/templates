@@ -15,6 +15,10 @@
       "groupSlug": "{{datasource}}",
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "groupName": "vite-plus",
+      "matchPackageNames": ["vite-plus", "@voidzero-dev/vite-plus-core"]
     }
   ]
 }

@@ -192,8 +192,9 @@ function apply_layer() {
             fi
             printf '%s\n' "$merged" > "$target"
             # yq's JSON layout differs from biome's; otherwise pre-commit fixes it on first commit
+            # (best effort: a global biome older than biome.json rejects its config)
             if [[ $format == json ]] && command -v biome > /dev/null 2>&1; then
-                biome format --write "$target" > /dev/null
+                biome format --write "$target" > /dev/null 2>&1 || true
             fi
         fi
         written+=("$target")

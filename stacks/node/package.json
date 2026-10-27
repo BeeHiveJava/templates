@@ -7,16 +7,16 @@
   },
   "scripts": {
     "lint": "biome check .",
-    "test": "turbo test",
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "deploy": "turbo deploy",
-    "preview": "turbo preview",
-    "typecheck": "turbo typecheck"
+    "test": "vp run typecheck && vp run -F '!.' --cache test",
+    "dev": "vp run -F '!.' --parallel dev",
+    "build": "vp run typecheck && vp run -F '!.' --cache build",
+    "deploy": "vp run build && vp run -F '!.' deploy",
+    "preview": "vp run build && vp run -F '!.' preview",
+    "typecheck": "vp run -F '!.' --cache typecheck"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
-    "turbo": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
   }
 }
