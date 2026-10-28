@@ -10,9 +10,19 @@ jobs:
     steps:
     - uses: actions/checkout@v7
     - uses: astral-sh/setup-uv@v10.3.2
+    - id: node
+      name: Resolve Node.js version
+      if: ${{ hashFiles('pnpm-workspace.yaml') != '' }}
+      # setup-vp only caches the toolchain for an exact version, so resolve engines.node the way Vite+ does
+      run: |
+        range="$(jq -r '.engines.node // empty' package.json)"
+        index="$(curl -fsSL --retry 3 --max-time 30 https://nodejs.org/dist/index.json)"
+        resolve() { npx --yes semver@7 -r "$range" $(jq -r "$1" <<< "$index") | tail -n1; }
+        version="$(resolve '.[] | select(.lts) | .version')"
+        echo "version=${version:-$(resolve '.[].version')}" >> "$GITHUB_OUTPUT"
     - uses: voidzero-dev/setup-vp@v1.22.0
       if: ${{ hashFiles('pnpm-workspace.yaml') != '' }}
-      with: { cache: true, cache-toolchain: true }
+      with: { cache: true, cache-toolchain: true, node-version: "${{ steps.node.outputs.version }}" }
     - uses: actions/cache@v6
       if: ${{ hashFiles('pnpm-workspace.yaml') != '' }}
       with:
