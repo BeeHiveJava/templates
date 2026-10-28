@@ -12,7 +12,7 @@ jobs:
     - uses: astral-sh/setup-uv@v10.3.2
     - uses: voidzero-dev/setup-vp@v1.22.0
       if: ${{ hashFiles('pnpm-workspace.yaml') != '' }}
-      with: { cache: true }
+      with: { cache: true, cache-toolchain: true }
     - uses: actions/cache@v6
       if: ${{ hashFiles('pnpm-workspace.yaml') != '' }}
       with:
