@@ -3,10 +3,15 @@ name: pre-commit
 
 on:
   workflow_call:
+    inputs:
+      runs-on:
+        description: The labels of the runner to run on, as a JSON array
+        type: string
+        default: '["ubuntu-latest"]'
 
 jobs:
   pre-commit:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     steps:
     - uses: actions/checkout@v7
     - uses: astral-sh/setup-uv@v10.3.2

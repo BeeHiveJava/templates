@@ -4,6 +4,10 @@ name: node
 on:
   workflow_call:
     inputs:
+      runs-on:
+        description: The labels of the runner to run on, as a JSON array
+        type: string
+        default: '["ubuntu-latest"]'
       dry-run:
         description: Build without deploying, defaults to true everywhere except main
         type: boolean
@@ -11,7 +15,7 @@ on:
 
 jobs:
   node:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     steps:
     - uses: actions/checkout@v7
     - id: node
