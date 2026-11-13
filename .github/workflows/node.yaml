@@ -8,6 +8,10 @@ on:
         description: The labels of the runner to run on, as a JSON array
         type: string
         default: '["ubuntu-latest"]'
+      cache:
+        description: Cache the toolchain and the task results between runs; off for a runner that keeps its own disk
+        type: boolean
+        default: true
       dry-run:
         description: Build without deploying, defaults to true everywhere except main
         type: boolean
@@ -28,8 +32,9 @@ jobs:
         version="$(resolve '.[] | select(.lts) | .version')"
         echo "version=${version:-$(resolve '.[].version')}" >> "$GITHUB_OUTPUT"
     - uses: voidzero-dev/setup-vp@v1.22.0
-      with: { cache: true, cache-toolchain: true, node-version: "${{ steps.node.outputs.version }}" }
+      with: { cache: "${{ inputs.cache }}", cache-toolchain: "${{ inputs.cache }}", node-version: "${{ steps.node.outputs.version }}" }
     - uses: actions/cache@v6
+      if: ${{ inputs.cache }}
       with:
         path: |
           node_modules/.vite/task-cache
