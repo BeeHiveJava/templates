@@ -4,7 +4,7 @@ packages:
 
 catalog:
   '@beehivejava/config': github:beehivejava/templates#path:/packages/config
-  '@biomejs/biome': 2.6.3
+  '@biomejs/biome': 2.6.6
   typescript: 7.0.2
   vite: npm:@voidzero-dev/vite-plus-core@1.5.1
   vite-plus: 1.5.1
