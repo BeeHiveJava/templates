@@ -8,6 +8,10 @@ on:
         description: The labels of the runner to run on, as a JSON array
         type: string
         default: '["ubuntu-latest"]'
+      cache:
+        description: Cache the toolchain and the task results between runs; off for a runner that keeps its own disk
+        type: boolean
+        default: true
 
 jobs:
   pre-commit:
@@ -27,14 +31,15 @@ jobs:
         echo "version=${version:-$(resolve '.[].version')}" >> "$GITHUB_OUTPUT"
     - uses: voidzero-dev/setup-vp@v1.22.0
       if: ${{ hashFiles('pnpm-workspace.yaml') != '' }}
-      with: { cache: true, cache-toolchain: true, node-version: "${{ steps.node.outputs.version }}" }
+      with: { cache: "${{ inputs.cache }}", cache-toolchain: "${{ inputs.cache }}", node-version: "${{ steps.node.outputs.version }}" }
     - uses: actions/cache@v6
-      if: ${{ hashFiles('pnpm-workspace.yaml') != '' }}
+      if: ${{ inputs.cache && hashFiles('pnpm-workspace.yaml') != '' }}
       with:
         path: node_modules/.vite/task-cache
         key: vite-task|pre-commit|${{ runner.os }}|${{ github.sha }}
         restore-keys: vite-task|pre-commit|${{ runner.os }}|
     - uses: actions/cache@v6
+      if: ${{ inputs.cache }}
       with:
         path: ~/.cache/pre-commit
         key: pre-commit|${{ hashFiles('.pre-commit-config.yaml') }}
