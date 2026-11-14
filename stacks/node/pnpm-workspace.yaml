@@ -6,8 +6,8 @@ catalog:
   '@beehivejava/config': github:beehivejava/templates#path:/packages/config
   '@biomejs/biome': 2.6.6
   typescript: 7.0.2
-  vite: npm:@voidzero-dev/vite-plus-core@1.5.1
-  vite-plus: 1.5.1
+  vite: npm:@voidzero-dev/vite-plus-core@1.6.0
+  vite-plus: 1.6.0
 
 # Route every Vite consumer (frameworks, plugins) through the Vite+ core
 overrides:
