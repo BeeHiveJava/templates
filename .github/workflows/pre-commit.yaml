@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ fromJSON(inputs.runs-on) }}
     steps:
     - uses: actions/checkout@v7
-    - uses: astral-sh/setup-uv@v10.3.3
+    - uses: astral-sh/setup-uv@v10.4.0
     - id: node
       name: Resolve Node.js version
       if: ${{ hashFiles('pnpm-workspace.yaml') != '' }}
