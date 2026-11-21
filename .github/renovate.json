@@ -28,8 +28,10 @@
       "matchUpdateTypes": ["minor", "patch"]
     },
     {
+      "description": "vite-plus pins its own core; core uses Vite-aligned versions, so its bumps look major while vite-plus bumps are minor. Keep them in one PR.",
       "groupName": "vite-plus",
-      "matchPackageNames": ["vite-plus", "@voidzero-dev/vite-plus-core"]
+      "matchPackageNames": ["vite-plus", "@voidzero-dev/vite-plus-core"],
+      "separateMajorMinor": false
     },
     {
       "groupName": "biome",
