@@ -17,13 +17,10 @@ on:
         type: boolean
         # A pull_request run that starts after its PR merged gets refs/heads/main as its ref
         default: ${{ github.event_name != 'push' || github.ref != 'refs/heads/main' }}
-    # A caller outside this organisation gets nothing from `secrets: inherit`, so it passes these by name
+    # A caller in another organisation gets nothing from `secrets: inherit`, so it passes them all as JSON
     secrets:
-      CLOUDFLARE_API_TOKEN:
-        description: The token wrangler deploys with
-        required: false
-      CLOUDFLARE_ACCOUNT_ID:
-        description: The Cloudflare account wrangler deploys to
+      SECRETS:
+        description: Every secret of the caller, as `toJSON(secrets)`
         required: false
 
 jobs:
@@ -48,7 +45,9 @@ jobs:
       - run: vp run build
       - name: Run vp run deploy
         run: |
-          eval "$(jq -r 'del(.github_token) | to_entries[] | "export \(.key)=\(.value | @sh)"' <<< "$SECRETS")"
+          secrets="$(jq -c '(.SECRETS // "{}" | fromjson) + del(.SECRETS) | del(.github_token)' <<< "$SECRETS")"
+          jq -r '.[] | splits("\n") | select(length > 0) | "::add-mask::\(.)"' <<< "$secrets"
+          eval "$(jq -r 'to_entries[] | "export \(.key)=\(.value | @sh)"' <<< "$secrets")"
           vp run deploy
         if: ${{ !inputs.dry-run }}
         env:
