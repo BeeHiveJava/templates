@@ -9,6 +9,12 @@
       "default": "./vite.js"
     }
   },
+  "scripts": {
+    "test": "vp test run"
+  },
+  "devDependencies": {
+    "vite-plus": "catalog:"
+  },
   "peerDependencies": {
     "vite-plus": ">=1.4.0"
   }

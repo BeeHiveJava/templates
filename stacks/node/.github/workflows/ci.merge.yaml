@@ -1,5 +1,0 @@
----
-jobs:
-  node:
-    uses: beehivejava/templates/.github/workflows/node.yaml@main
-    secrets: inherit

@@ -3,20 +3,27 @@
   "name": "templates",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:26",
   "features": {
-    "ghcr.io/devcontainer-community/devcontainer-features/biomejs.dev:1": {},
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
       "moby": false
-    },
-    "ghcr.io/devcontainers-extra/features/pre-commit:2": {}
+    }
   },
   "customizations": {
     "vscode": {
-      "extensions": [
-        "biomejs.biome",
-        "EditorConfig.EditorConfig",
-        "redhat.vscode-yaml"
-      ]
+      "extensions": ["EditorConfig.EditorConfig", "redhat.vscode-yaml", "VoidZero.vite-plus-extension-pack"],
+      "settings": {
+        "editor.defaultFormatter": "oxc.oxc-vscode",
+        "[javascript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+        "[javascriptreact]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+        "[typescript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+        "[typescriptreact]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+        "[vue]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+        "oxc.disableNestedConfig": true,
+        "oxc.fmt.disableNestedConfig": true
+      }
     }
   },
-  "postCreateCommand": "pre-commit install"
+  "remoteEnv": {
+    "PATH": "${containerWorkspaceFolder}/node_modules/.bin:${containerEnv:PATH}"
+  },
+  "postCreateCommand": "npx --yes --package=vite-plus vp install"
 }

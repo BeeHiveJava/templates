@@ -18,7 +18,7 @@ fi
 set -o errtrace         # Ensure the error trap handler is inherited
 
 # Repository root paths that belong to this repository only
-readonly ROOT_EXCLUDES=(.git .github packages .devcontainer/devcontainer-lock.json stacks init.sh README.md)
+readonly ROOT_EXCLUDES=(.git .github packages scaffold .devcontainer/devcontainer-lock.json init.sh README.md pnpm-lock.yaml node_modules)
 
 # DESC: Exit script with the given message
 # ARGS: $1 (required): Message to print on exit
@@ -45,29 +45,26 @@ function script_exit() {
 # RETS: None
 function script_usage() {
     cat << EOF
-Usage: init.sh [options] [stack...]
+Usage: init.sh [options]
 
-Scaffolds the current directory. Without stacks, prompts for them.
+Scaffolds a Vite+ workspace in the current directory, then installs and formats it.
 
 Options:
      -h|--help                  Displays this help
-     -y|--yes                   Don't prompt (base only)
 
 Environment:
-    TEMPLATE                    Local template directory (default: download from GitHub)
+    TEMPLATE                    Local template directory, also used for @beehivejava/config
+                                (default: download from GitHub)
     DEBUG                       Set to 1 to trace execution
 EOF
 }
 
 # DESC: Parameter parser
 # ARGS: $@ (optional): Arguments provided to the script
-# OUTS: $stacks: Chosen stacks
-#       $interactive: Whether to prompt for stacks
+# OUTS: None
 # RETS: None
 function parse_params() {
     local param
-    stacks=()
-    interactive=true
     while [[ $# -gt 0 ]]; do
         param="$1"
         shift
@@ -76,15 +73,8 @@ function parse_params() {
                 script_usage
                 exit 0
                 ;;
-            -y | --yes)
-                interactive=false
-                ;;
-            -*)
-                script_exit "Invalid parameter was provided: $param" 1
-                ;;
             *)
-                stacks+=("$param")
-                interactive=false
+                script_exit "Invalid parameter was provided: $param" 1
                 ;;
         esac
     done
@@ -140,30 +130,6 @@ function yq_init() {
     PATH="$work/bin:$PATH"
 }
 
-# DESC: Locate biome, preferring a global install over the version pinned for pre-commit
-# ARGS: None
-# OUTS: $biome: Command to run biome, empty if unavailable
-# RETS: None
-function biome_init() {
-    biome=()
-    if command -v biome > /dev/null 2>&1; then
-        biome=(biome)
-    elif command -v npx > /dev/null 2>&1; then
-        biome=(npx --yes "$(grep -o '@biomejs/biome@[^"]*' "$template/.pre-commit-config.yaml")")
-    fi
-}
-
-# DESC: Prompt for stacks via the terminal, as stdin is this script when piped
-# ARGS: None
-# OUTS: $stacks: Chosen stacks
-# RETS: None
-function pick_stacks() {
-    local available
-    available="$(cd "$template/stacks" && ls -d -- */ | tr -d / | grep -vx base | tr '\n' ' ')"
-    printf 'Available stacks: %s\n' "$available"
-    read -r -p 'Stacks (space-separated, empty for none): ' -a stacks < /dev/tty
-}
-
 # DESC: Apply a layer to the current directory. Files are copied, except
 #       <file>.append (appended to <file>) and <name>.merge.<json|yaml|yml>
 #       (deep-merged into <name>.<ext> with yq).
@@ -204,11 +170,6 @@ function apply_layer() {
                 merged="$(yq -p "$format" -o "$format" eval-all 'select(fi == 0) * select(fi == 1)' "$target" "$src/$file")"
             fi
             printf '%s\n' "$merged" > "$target"
-            # yq's JSON layout differs from biome's; otherwise pre-commit fixes it on first commit
-            # (best effort: a global biome older than biome.json rejects its config)
-            if [[ $format == json && ${#biome[@]} -gt 0 ]]; then
-                "${biome[@]}" format --write "$target" > /dev/null 2>&1 || true
-            fi
         fi
         written+=("$target")
     done < <(cd "$src" && find . ${prune[@]+"${prune[@]}"} -type f -print)
@@ -229,31 +190,48 @@ function fill_placeholders() {
     done
 }
 
+# DESC: Use the local template's config package instead of the published one
+# ARGS: None
+# OUTS: None
+# RETS: None
+function link_config() {
+    local content
+    if [[ -n ${TEMPLATE-} ]]; then
+        content="$(sed "s|github:beehivejava/templates#path:/packages/config|file:$TEMPLATE/packages/config|" pnpm-workspace.yaml)"
+        printf '%s\n' "$content" > pnpm-workspace.yaml
+    fi
+}
+
+# DESC: Install the dependencies and format what the layers wrote (yq's layout
+#       is not the formatter's), with vite-plus downloading the package manager
+# ARGS: None
+# OUTS: None
+# RETS: None
+function install() {
+    if ! command -v npx > /dev/null 2>&1; then
+        printf 'Node.js not found, run "npx --package=vite-plus vp install && vp fmt" once it is\n' >&2
+        return
+    fi
+    npx --yes --package=vite-plus vp install
+    node_modules/.bin/vp fmt > /dev/null
+}
+
 # DESC: Main control flow
 # ARGS: $@ (optional): Arguments provided to the script
 # OUTS: None
 # RETS: None
 function main() {
-    local stack
     parse_params "$@"
     work_init
     template_init
     yq_init
-    biome_init
-    if [[ $interactive == true ]]; then
-        pick_stacks
-    fi
-    for stack in ${stacks[@]+"${stacks[@]}"}; do
-        [[ -d $template/stacks/$stack ]] || script_exit "Unknown stack: $stack" 1
-    done
 
     written=()
     apply_layer "$template" "${ROOT_EXCLUDES[@]}"
-    apply_layer "$template/stacks/base"
-    for stack in ${stacks[@]+"${stacks[@]}"}; do
-        apply_layer "$template/stacks/$stack"
-    done
+    apply_layer "$template/scaffold"
     fill_placeholders
+    link_config
+    install
 }
 
 # Invoke main with args if not sourced

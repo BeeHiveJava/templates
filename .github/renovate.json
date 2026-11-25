@@ -4,21 +4,9 @@
   "extends": [
     "config:base",
     "security:minimumReleaseAgeNpm",
-    ":enablePreCommit",
     ":disableDependencyDashboard",
     ":disableRateLimiting",
     ":semanticCommits"
-  ],
-  "customManagers": [
-    {
-      "customType": "regex",
-      "description": "npm packages in pre-commit additional_dependencies",
-      "managerFilePatterns": ["/(^|/)\\.pre-commit-config\\.ya?ml$/"],
-      "matchStrings": [
-        "[\"'](?<depName>@?[^@\"'\\s]+)@(?<currentValue>[^\"'\\s]+)[\"']"
-      ],
-      "datasourceTemplate": "npm"
-    }
   ],
   "packageRules": [
     {
@@ -32,10 +20,6 @@
       "groupName": "vite-plus",
       "matchPackageNames": ["vite-plus", "@voidzero-dev/vite-plus-core"],
       "separateMajorMinor": false
-    },
-    {
-      "groupName": "biome",
-      "matchPackageNames": ["@biomejs/biome", "biomejs/pre-commit"]
     }
   ]
 }

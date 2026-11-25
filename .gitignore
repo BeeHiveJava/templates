@@ -4,3 +4,17 @@
 # IDE
 **/.idea/
 **/.vscode/
+
+# Node
+**/node_modules/
+**/dist/
+
+# Cloudflare
+**/.wrangler/
+**/worker-configuration.d.ts
+
+# Nuxt
+**/.data/
+**/.output/
+**/.nuxt/
+**/nuxt/dist/
