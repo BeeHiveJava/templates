@@ -25,8 +25,14 @@ jobs:
       - uses: actions/checkout@v7
       - id: node
         name: Resolve Node.js version
-        # setup-vp only caches the toolchain for an exact version, so resolve engines.node the way Vite+ does
+        # setup-vp only caches the toolchain for an exact version, so resolve engines.node the way Vite+ does.
+        # Without one, Vite+ resolves engines.node itself, which is all a run without the cache needs.
+        if: ${{ inputs.cache }}
         run: |
+          if ! command -v npx > /dev/null; then
+            echo "::notice::No npx on this runner: Vite+ resolves engines.node itself, without caching the toolchain"
+            exit 0
+          fi
           range="$(jq -r '.engines.node // empty' package.json)"
           index="$(curl -fsSL --retry 3 --max-time 30 https://nodejs.org/dist/index.json)"
           resolve() { npx --yes semver@7 -r "$range" $(jq -r "$1" <<< "$index") | tail -n1; }
