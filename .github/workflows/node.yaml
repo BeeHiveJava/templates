@@ -17,6 +17,14 @@ on:
         type: boolean
         # A pull_request run that starts after its PR merged gets refs/heads/main as its ref
         default: ${{ github.event_name != 'push' || github.ref != 'refs/heads/main' }}
+    # A caller outside this organisation gets nothing from `secrets: inherit`, so it passes these by name
+    secrets:
+      CLOUDFLARE_API_TOKEN:
+        description: The token wrangler deploys with
+        required: false
+      CLOUDFLARE_ACCOUNT_ID:
+        description: The Cloudflare account wrangler deploys to
+        required: false
 
 jobs:
   node:
