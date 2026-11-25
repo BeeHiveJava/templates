@@ -7,17 +7,27 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  pre-commit:
-    uses: ./.github/workflows/pre-commit.yaml
+  # node.yaml also builds and deploys, which nothing here does
+  node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: voidzero-dev/setup-vp@v1.22.0
+        with: { node-version: "26" }
+      - run: vp run lint
+      - run: vp run test
 
   render:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        stacks: ["-y", "node"]
     steps:
-    - uses: actions/checkout@v7
-    - run: mkdir "$RUNNER_TEMP/out" && cd "$RUNNER_TEMP/out" && TEMPLATE="$GITHUB_WORKSPACE" bash "$GITHUB_WORKSPACE/init.sh" ${{ matrix.stacks }}
-    - run: npx --yes @biomejs/biome check .
-      working-directory: ${{ runner.temp }}/out
+      - uses: actions/checkout@v7
+      - uses: voidzero-dev/setup-vp@v1.22.0
+        with: { node-version: "26", run-install: false }
+      - run: mkdir "$RUNNER_TEMP/out" && cd "$RUNNER_TEMP/out" && TEMPLATE="$GITHUB_WORKSPACE" bash "$GITHUB_WORKSPACE/init.sh"
+      - run: vp check
+        working-directory: ${{ runner.temp }}/out
