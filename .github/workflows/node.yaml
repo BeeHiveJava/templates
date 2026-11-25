@@ -13,9 +13,10 @@ on:
         type: boolean
         default: true
       dry-run:
-        description: Build without deploying, defaults to true everywhere except main
+        description: Build without deploying, defaults to true everywhere except a push to main
         type: boolean
-        default: ${{ github.ref != 'refs/heads/main' }}
+        # A pull_request run that starts after its PR merged gets refs/heads/main as its ref
+        default: ${{ github.event_name != 'push' || github.ref != 'refs/heads/main' }}
 
 jobs:
   node:
