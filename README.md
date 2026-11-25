@@ -3,7 +3,7 @@
 Scaffolds a [Vite+](https://viteplus.dev) workspace, and holds what every scaffolded repository shares:
 
 - [`@beehivejava/config`](packages/config): the Vite+ config (format, lint, staged checks and tasks) and the TypeScript configs
-- [`node.yaml`](.github/workflows/node.yaml): the CI workflow, running the `lint`, `test`, `build` and `deploy` tasks
+- [`node.yaml`](.github/workflows/node.yaml): the CI workflow, running the `lint`, `test`, `build` and `deploy` tasks. A repository in another organisation gets no secrets through `secrets: inherit`, so it passes them all as one: `secrets: { SECRETS: ${{ toJSON(secrets) }} }`
 - [`renovate.json`](.github/renovate.json): the Renovate preset
 
 This repository is scaffolded the same way: everything except `.github`, `packages`, `scaffold` and this file is copied, then [`scaffold`](scaffold) is layered on top.
