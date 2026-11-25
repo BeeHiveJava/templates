@@ -24,8 +24,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: voidzero-dev/setup-vp@v1.22.0
-        # Vite+ resolves engines.node itself. The toolchain is only cached for an exact Node.js version,
-        # such as one pinned in .node-version
         with:
           cache: ${{ inputs.cache }}
           cache-toolchain: ${{ inputs.cache }}
